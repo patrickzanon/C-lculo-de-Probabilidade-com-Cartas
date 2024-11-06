@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cálculo de Probabilidade com Cartas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #333;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(6, 60px);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .card {
+            width: 50px;
+            height: 70px;
+            border: 2px solid red;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.3s;
+            font-size: 1.2em;
+        }
+        .card.selected {
+            background-color: rgba(0, 255, 0, 0.5);
+        }
+        .input-container, .output-container {
+            margin-bottom: 20px;
+        }
+        .output {
+            font-size: 1.5em;
+            margin-top: 10px;
+        }
+        input[type="number"] {
+            padding: 5px;
+            width: 60px;
+            font-size: 1em;
+        }
+        
+    </style>
+</head>
+<body>
+    <h1>Cálculo de Probabilidade com Cartas</h1>
+
+    <div class="cards-container" id="cardsContainer">
+        <!-- Cartas serão geradas por JavaScript -->
+    </div>
+
+    <div class="input-container">
+        <label for="inputABC">Evento: </label>
+        <input type="number" id="inputABC" min="0" max="24" value="0">
+    </div>
+
+    <div class="output-container">
+        <p>Resultado:</p>
+        <div class="output" id="outputResult">0%</div>
+    </div>
+    <div id="creditos">
+        <div id="creditos1"><strong>Autor:</strong>PATRICK EDUARDO ZANON MACIEL </div><br>
+        <br>
+        <br>
+        <div>No campo envento colocar somente as possibilidades do Evento.</div><br>
+        <div>O valor é dividido por (24 - quantidade de cartas selecionadas).</div>
+    </div>
+    <script>
+        // Configurações iniciais
+        const totalCards = 24;
+        const cardsContainer = document.getElementById("cardsContainer");
+        const outputResult = document.getElementById("outputResult");
+        const inputABC = document.getElementById("inputABC");
+
+        // Representação das cartas
+        const cardValues = ["3", "2", "A", "K", "J", "Q"];
+        const cardSuits = ["♣", "♥", "♠", "♦"]; // Paus, Copas, Espadas, Ouros
+
+        // Função para gerar as cartas
+        function createCards() {
+            let cardIndex = 0;
+            for (let suit of cardSuits) {
+                for (let value of cardValues) {
+                    const card = document.createElement("div");
+                    card.classList.add("card");
+                    card.innerHTML = `<div>${value}</div><div>${suit}</div>`;
+                    card.dataset.index = cardIndex;
+                    card.addEventListener("click", () => toggleCardSelection(card));
+                    cardsContainer.appendChild(card);
+                    cardIndex++;
+                }
+            }
+        }
+
+        // Alterna a seleção de cartas e atualiza o cálculo
+        function toggleCardSelection(card) {
+            card.classList.toggle("selected");
+            calculateProbability();
+        }
+
+        // Função para calcular e exibir o resultado
+        function calculateProbability() {
+            const selectedCards = document.querySelectorAll(".card.selected").length;
+            const abcValue = parseFloat(inputABC.value);
+            const denominator = totalCards - selectedCards;
+
+            if (denominator > 0) {
+                const probability = (abcValue / denominator) * 100;
+                outputResult.textContent = `${probability.toFixed(2)}%`;
+            } else {
+                outputResult.textContent = "Erro: Divisão por zero";
+            }
+        }
+
+        // Evento para atualizar o cálculo ao alterar o valor de ABC
+        inputABC.addEventListener("input", calculateProbability);
+
+        // Gera as cartas ao carregar a página
+        createCards();
+    </script>
+</body>
+</html>
